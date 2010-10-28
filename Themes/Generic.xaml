@@ -1,0 +1,15 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:Custom.Controls">
+    <Style TargetType="{x:Type local:EditableTextBlock}" x:Name="editableTextBlockStyle">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate x:Name="editableTextBlockTemplate" TargetType="{x:Type local:EditableTextBlock}">
+                    <Border BorderThickness="1.0" BorderBrush="Transparent">
+                    <ContentPresenter ContentSource="Content" />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>
