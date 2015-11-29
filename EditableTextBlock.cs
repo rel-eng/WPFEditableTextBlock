@@ -871,6 +871,15 @@ namespace Custom.Controls
 
         #region Event Handlers
 
+        private void OnTextBoxKeyboardFocusChanged(object sender, KeyboardFocusChangedEventArgs e)
+        {
+            if (e.OldFocus == sender)
+            {
+                Text = ((TextBox)sender).Text;
+                this.IsInEditMode = false;
+            }
+        }
+
         private void OnTextBoxLostFocus(object sender, RoutedEventArgs e)
         {
             Text = ((TextBox)sender).Text;
@@ -1036,35 +1045,45 @@ namespace Custom.Controls
         private void StartEditing()
         {
             this._OldText = this.Text;
-            TextBox tb = new TextBox();
-            tb.VerticalAlignment = VerticalAlignment.Stretch;
-            tb.HorizontalAlignment = HorizontalAlignment.Stretch;
-            tb.KeyDown += new KeyEventHandler(OnTextBoxKeyDown);
-            tb.LostFocus += new RoutedEventHandler(OnTextBoxLostFocus);
-            tb.GotFocus += new RoutedEventHandler(OnTextBoxGotFocus);
-            tb.Text = this.Text;
-            tb.AcceptsReturn = this.AcceptsReturn;
-            tb.AcceptsTab = this.AcceptsTab;
-            tb.TextWrapping = this.TextWrapping;
-            tb.VerticalScrollBarVisibility = this.VerticalScrollBarVisibility;
-            tb.HorizontalScrollBarVisibility = this.HorizontalScrollBarVisibility;
-            this.Content = tb;
+            TextBox textbox = new TextBox();
+            textbox.VerticalAlignment = VerticalAlignment.Stretch;
+            textbox.HorizontalAlignment = HorizontalAlignment.Stretch;
+            textbox.KeyDown += new KeyEventHandler(OnTextBoxKeyDown);
+            textbox.LostFocus += new RoutedEventHandler(OnTextBoxLostFocus);
+            textbox.GotFocus += new RoutedEventHandler(OnTextBoxGotFocus);
+            textbox.LostKeyboardFocus += new KeyboardFocusChangedEventHandler(OnTextBoxKeyboardFocusChanged);
+            textbox.Text = this.Text;
+            textbox.AcceptsReturn = this.AcceptsReturn;
+            textbox.AcceptsTab = this.AcceptsTab;
+            textbox.TextWrapping = this.TextWrapping;
+            textbox.VerticalScrollBarVisibility = this.VerticalScrollBarVisibility;
+            textbox.HorizontalScrollBarVisibility = this.HorizontalScrollBarVisibility;
+            this.Content = textbox;
             if (!DesignerProperties.GetIsInDesignMode(this))
             {
-                this.SetFocusThroughDispatcher(tb);
+                this.SetFocusThroughDispatcher(textbox);
             }
         }
 
         private void StopEditing()
         {
-            TextBlock tb = new TextBlock();
-            tb.VerticalAlignment = VerticalAlignment.Stretch;
-            tb.HorizontalAlignment = HorizontalAlignment.Stretch;
-            tb.Text = this.Text;
-            tb.Margin = new Thickness(5.0, 3.0, 5.0, 3.0);
-            tb.TextWrapping = this.TextWrapping;
-            tb.TextTrimming = this.TextTrimming;
-            this.Content = tb;
+            TextBox textbox = this.Content as TextBox;
+            if(textbox != null)
+            {
+                textbox.KeyDown -= new KeyEventHandler(OnTextBoxKeyDown);
+                textbox.LostFocus -= new RoutedEventHandler(OnTextBoxLostFocus);
+                textbox.GotFocus -= new RoutedEventHandler(OnTextBoxGotFocus);
+                textbox.LostKeyboardFocus -= new KeyboardFocusChangedEventHandler(OnTextBoxKeyboardFocusChanged);
+            }
+
+            TextBlock textblock = new TextBlock();
+            textblock.VerticalAlignment = VerticalAlignment.Stretch;
+            textblock.HorizontalAlignment = HorizontalAlignment.Stretch;
+            textblock.Text = this.Text;
+            textblock.Margin = new Thickness(5.0, 3.0, 5.0, 3.0);
+            textblock.TextWrapping = this.TextWrapping;
+            textblock.TextTrimming = this.TextTrimming;
+            this.Content = textblock;
         }
 
         private string FormatText(string text, string format)
